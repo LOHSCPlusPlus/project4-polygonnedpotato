@@ -1,0 +1,2 @@
+language = "cpp"
+run = "make -f CropDB.mak; valgrind --leak-check=full ./CropDB"

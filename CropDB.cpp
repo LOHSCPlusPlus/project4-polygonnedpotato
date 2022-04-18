@@ -9,6 +9,7 @@ using namespace std;
 Create the DB and load the default .txt file using the private readFile function.
 */
 CropDB::CropDB(){
+    crops=new CropInfo[MAX_CROPS];
     numCrops = 0;
     readFile("cropTiny.txt");
 }
@@ -218,4 +219,8 @@ void CropDB::readFile(const char fileName[]) {
     if (numCrops == 0) {
         cout << "There is no crop data in " << fileName << " did you spell it correctly?" << endl;
     }
+}
+CropDB::~CropDB(){
+  // crops=NULL;
+  delete [] crops;  
 }
