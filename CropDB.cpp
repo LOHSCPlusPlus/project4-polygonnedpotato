@@ -9,7 +9,8 @@ using namespace std;
 Create the DB and load the default .txt file using the private readFile function.
 */
 CropDB::CropDB(){
-    crops=new CropInfo[MAX_CROPS];
+    // crops=new CropInfo[MAX_CROPS];
+    crops=nullptr;
     numCrops = 0;
     readFile("cropTiny.txt");
 }
@@ -42,7 +43,8 @@ Insert a new entry at an index specified by the user.
 The values will be read from the console.
 */
 void CropDB::insert(){
-    if (numCrops < MAX_CROPS) {
+    if (1/*numCrops < MAX_CROPS*/) {
+        expand();
         int insertIndex = getValidIndex();
         for (int index = numCrops; index > insertIndex; index--) {
             crops[index] = crops[index - 1];
@@ -61,7 +63,8 @@ Add a new entry at the end of the current array.
 The values will be read from the console.
 */
 void CropDB::add(){
-    if (numCrops < MAX_CROPS) {
+    if (1/*numCrops < MAX_CROPS*/) {
+        expand();
         crops[numCrops].readFromUser();
         numCrops++;
     }
@@ -79,6 +82,7 @@ void CropDB::remove(){
         int delIndex = getValidIndex();
         for (int index = delIndex; index < numCrops - 1; index++) {
             crops[index] = crops[index + 1];
+          shrink();
         }
         numCrops--;
     }
@@ -212,7 +216,8 @@ Used in the constructor and reload functions.
 void CropDB::readFile(const char fileName[]) {
     ifstream file(fileName);
     numCrops = 0;
-    while(file.peek() != EOF && numCrops < MAX_CROPS) {
+    while(file.peek() != EOF/* && numCrops < MAX_CROPS*/) {
+        expand();
         crops[numCrops].readFromFile(file);
         numCrops++;
     }
@@ -220,6 +225,26 @@ void CropDB::readFile(const char fileName[]) {
         cout << "There is no crop data in " << fileName << " did you spell it correctly?" << endl;
     }
 }
+void CropDB::expand() {
+   CropInfo *temp = new CropInfo[numCrops + 1];
+   for (int i = 0; i < numCrops; i++) {
+      temp[i] = crops[i];
+   }
+   delete [] crops;
+   crops = temp;
+}
+void CropDB::shrink() {
+  CropInfo *temp = nullptr;
+  if (numCrops > 1) {
+    temp = new CropInfo[numCrops - 1];
+    for (int i = 0; i < numCrops - 1; i++) {
+      temp[i] = crops[i];
+    }
+  }
+  delete [] crops;
+  crops = temp;
+}
+
 CropDB::~CropDB(){
   // crops=NULL;
   delete [] crops;  
